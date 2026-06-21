@@ -619,11 +619,21 @@ Credential fields support `${ENV_VAR}` expansion for secure configuration. If th
 | `azure_storage_account is required` | Missing Azure credential config | Set `azure_storage_account` in the credentials section or via `AZURE_STORAGE_ACCOUNT` env var |
 | Large file hashing appears frozen | Hashing large files (physmem.raw, E01) takes time | Progress updates appear every 2 seconds for files over 100MB. Wait for completion. |
 
+## Evidence Collection Guide
+
+For forensic best practices, chain of custody procedures, legal considerations,
+and cloud storage security guidance, see the
+[Evidence Collection Guide](docs/EVIDENCE-GUIDE.md).
+
+**Important:** Consult qualified legal counsel in your jurisdiction before using
+SPECTER for evidence collection in legal proceedings.
+
 ## License
 
-Proprietary. (c) 2025 Tech Javelin, Ltd. All Rights Reserved.
+Proprietary. (c) 2026 Tech Javelin, Ltd. All Rights Reserved.
 
 ## Links
 
 - **Website**: https://techjavelin.com
 - **GitHub**: https://github.com/techjavelin/specter-app
+- **Evidence Guide**: [docs/EVIDENCE-GUIDE.md](docs/EVIDENCE-GUIDE.md)
