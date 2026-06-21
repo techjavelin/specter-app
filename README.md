@@ -62,8 +62,8 @@ sudo mv specter /usr/local/bin/
 
 **Platform notes:**
 
-- **macOS**: You may need to allow the binary in System Settings > Privacy & Security after the first run. Requires `libewf` via Homebrew (`brew install libewf`).
-- **Linux**: Fully self-contained. `ewfacquire` and `ewfverify` are bundled as statically-linked binaries in the `tools/` directory. No package installation required.
+- **macOS**: You may need to allow the binary in System Settings > Privacy & Security after the first run. All tools are bundled.
+- **Linux**: Fully self-contained. All tools are bundled as statically-linked binaries in the `tools/` directory.
 - **Windows**: Run from an elevated (Administrator) command prompt or PowerShell. All tools are bundled.
 
 ## Quick Start
@@ -599,15 +599,14 @@ Credential fields support `${ENV_VAR}` expansion for secure configuration. If th
 ## Requirements
 
 - **Administrator/root** -- required for raw disk access and memory capture
-- **Windows/Linux** -- fully self-contained. All forensic tools (`ewfacquire`, `ewfverify`, WinPmem) are bundled in the `tools/` directory.
-- **macOS** -- requires `libewf` via Homebrew: `brew install libewf`
-- Memory tools (optional): WinPmem (Windows, bundled), osxpmem (macOS/Intel, user-provided), LiME (Linux, kernel module)
+- **All platforms** -- fully self-contained. All forensic tools (`ewfacquire`, `ewfverify`, WinPmem) are bundled in the `tools/` directory. No package installation is needed or permitted -- installing software on the target machine would taint the forensic image.
+- Memory tools (optional): WinPmem (Windows, bundled), osxpmem (macOS/Intel, bundled), LiME (Linux, kernel module)
 
 ## Troubleshooting
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| `ewfacquire: command not found` | ewfacquire not in PATH or `tools/` | On Windows/Linux: verify `tools/` directory exists next to the binary. On macOS: `brew install libewf`. |
+| `ewfacquire: command not found` | ewfacquire not in PATH or `tools/` | Verify the `tools/` directory exists next to the SPECTER binary and contains `ewfacquire`. Re-extract from the release zip if missing. |
 | `permission denied` / `access denied` | Not running as admin/root | Run with `sudo` (macOS/Linux) or as Administrator (Windows) |
 | Disk imaging progress stuck at 0% | Stale TUI state (older versions) | Update to latest SPECTER release |
 | Acquisition hangs after all phases complete | Older version missing completion event | Update to latest SPECTER release |
