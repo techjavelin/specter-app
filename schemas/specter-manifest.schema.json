@@ -21,8 +21,7 @@
   "properties": {
     "specter_version": {
       "type": "string",
-      "description": "SPECTER manifest schema version.",
-      "const": "2.0"
+      "description": "SPECTER version that produced this manifest."
     },
     "run_id": {
       "type": "string",

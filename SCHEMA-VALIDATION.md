@@ -1,4 +1,4 @@
-# SPECTER Manifest Schema — Validation Guide
+# SPECTER Manifest Schema -- Validation Guide
 
 This document explains how to locate and use the correct JSON Schema to validate a `specter-manifest.json` file produced by the SPECTER forensic acquisition toolkit.
 
@@ -22,47 +22,46 @@ schemas/specter-manifest.schema.json
 
 ```json
 {
-  "specter_version": "2.0",
+  "specter_version": "1.0.0-RC",
   "run_id": "SutaJavelin-1782015113397301600",
   ...
 }
 ```
 
-The `specter_version` field is a string (e.g., `"2.0"`).
+The `specter_version` field matches the release version (the Git tag without the `v` prefix).
 
-### Step 2: Map version to tag
+### Step 2: Derive the tag
 
-The version-to-tag mapping is:
+The tag is simply `v` + `specter_version`. For example:
+- `specter_version: "1.0.0-RC"` -> tag `v1.0.0-RC`
+- `specter_version: "1.0.0"` -> tag `v1.0.0`
+- `specter_version: "1.1.0"` -> tag `v1.1.0`
 
-| `specter_version` | Git tag |
-|---|---|
-| `"2.0"` | `v1.0.0` (current) |
-
-For the current release cycle, all `specter_version: "2.0"` manifests use the schema at the latest release tag. Once versioning stabilizes post-1.0, the `specter_version` will increment with breaking schema changes.
-
-**Recommended approach:** Use the latest release tag to fetch the schema, or pin to a known-good tag in your application config.
+There is no separate version mapping. The version IS the version.
 
 ### Step 3: Fetch the schema
 
 **Via raw URL (public, no auth required):**
 
 ```
-https://raw.githubusercontent.com/techjavelin/specter-docs/{tag}/schemas/specter-manifest.schema.json
+https://raw.githubusercontent.com/techjavelin/specter-docs/v{specter_version}/schemas/specter-manifest.schema.json
 ```
 
 Example:
 ```
-https://raw.githubusercontent.com/techjavelin/specter-docs/v1.0.0/schemas/specter-manifest.schema.json
+https://raw.githubusercontent.com/techjavelin/specter-docs/v1.0.0-RC/schemas/specter-manifest.schema.json
 ```
 
 **Via GitHub API:**
 
 ```http
-GET https://api.github.com/repos/techjavelin/specter-docs/contents/schemas/specter-manifest.schema.json?ref={tag}
+GET https://api.github.com/repos/techjavelin/specter-docs/contents/schemas/specter-manifest.schema.json?ref=v{specter_version}
 Accept: application/vnd.github.raw+json
 ```
 
-No authentication is required — this is a public repository.
+No authentication is required -- this is a public repository.
+
+**Fallback:** If the exact tag is not found (e.g., a dev build), fetch from the `latest` release or `main` branch.
 
 ### Step 4: Validate
 
@@ -79,15 +78,19 @@ import json
 import jsonschema
 import urllib.request
 
-def validate_manifest(manifest_path, schema_tag="v1.0.0"):
-    schema_url = f"https://raw.githubusercontent.com/techjavelin/specter-docs/{schema_tag}/schemas/specter-manifest.schema.json"
-    
-    with urllib.request.urlopen(schema_url) as r:
-        schema = json.loads(r.read())
-    
+def validate_manifest(manifest_path, schema_tag=None):
     with open(manifest_path) as f:
         manifest = json.load(f)
-    
+
+    # Derive tag from manifest version if not specified
+    if schema_tag is None:
+        schema_tag = "v" + manifest["specter_version"]
+
+    schema_url = f"https://raw.githubusercontent.com/techjavelin/specter-docs/{schema_tag}/schemas/specter-manifest.schema.json"
+
+    with urllib.request.urlopen(schema_url) as r:
+        schema = json.loads(r.read())
+
     jsonschema.validate(manifest, schema)  # raises ValidationError on failure
 ```
 
@@ -96,8 +99,11 @@ Example (TypeScript):
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 
-async function validateManifest(manifest: object, schemaTag = "v1.0.0") {
+async function validateManifest(manifest: Record<string, unknown>) {
+  const version = manifest.specter_version as string;
+  const schemaTag = `v${version}`;
   const schemaUrl = `https://raw.githubusercontent.com/techjavelin/specter-docs/${schemaTag}/schemas/specter-manifest.schema.json`;
+
   const res = await fetch(schemaUrl);
   const schema = await res.json();
 
@@ -116,10 +122,10 @@ async function validateManifest(manifest: object, schemaTag = "v1.0.0") {
 The schema enforces:
 
 - **All required fields** must be present (`specter_version`, `run_id`, `examiner`, `host`, `phases`, `files`, `seal`, etc.)
-- **`sealed` must be `true`** — unsealed packages must not be imported
-- **Every file entry** must have either `sha256` (hex, 64 chars) **or** `verified_by` (string) — never both, never neither
+- **`sealed` must be `true`** -- unsealed packages must not be imported
+- **Every file entry** must have either `sha256` (hex, 64 chars) **or** `verified_by` (string) -- never both, never neither
 - **Phase statuses** must be one of: `pending`, `running`, `done`, `failed`, `skipped`
-- **No additional properties** are allowed at any level — the schema is strict
+- **No additional properties** are allowed at any level -- the schema is strict
 - **HMAC seal** must include `hmac_sha256` (64-char hex) and `hmac_key_components` array
 
 ## Post-Validation: HMAC Verification
