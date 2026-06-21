@@ -1,6 +1,16 @@
 # SPECTER
 
-**Forensic Acquisition Engine by Tech Javelin**
+```
+  ███████╗██████╗ ███████╗ ██████╗████████╗███████╗██████╗
+  ██╔════╝██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔════╝██╔══██╗
+  ███████╗██████╔╝█████╗  ██║        ██║   █████╗  ██████╔╝
+  ╚════██║██╔═══╝ ██╔══╝  ██║        ██║   ██╔══╝  ██╔══██╗
+  ███████║██║     ███████╗╚██████╗   ██║   ███████╗██║  ██║
+  ╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚══════╝╚═╝  ╚═╝
+                    Forensic Acquisition Engine
+```
+
+**by Tech Javelin**
 
 [![Release](https://img.shields.io/github/v/release/techjavelin/specter-docs?label=release)](https://github.com/techjavelin/specter-docs/releases)
 [![License](https://img.shields.io/badge/license-proprietary-red.svg)](LICENSE)
@@ -9,6 +19,16 @@
 > *Clone. Verify. Deliver.*
 
 SPECTER is a cross-platform forensic disk acquisition toolkit written in Go. It produces court-admissible E01 disk images with HMAC-sealed chain-of-custody manifests, captures volatile state and system triage data, and supports streaming upload to cloud storage (AWS S3, Google Cloud Storage, Azure Blob).
+
+---
+
+## Why SPECTER?
+
+A specter is a ghost -- an exact but intangible echo of something that once existed. That is precisely what forensic disk imaging does: it creates a ghost image of a device, a perfect bit-for-bit copy that preserves the original state without altering it. The image is the specter of the machine.
+
+The deliberate misspelling -- SPECTER, not SPECTRE -- is intentional. This is not a Bond villain or a CVE. It is a nod to the American English spelling and a quiet declaration that this tool is its own thing. It also serves as a hat tip to the era that inspired it: the rambunctious, irreverent, ASCII-art-in-your-MOTD hacker culture of the 1990s, when tools had personality, names meant something, and nobody spelled anything the way you expected them to.
+
+SPECTER creates ghosts. That is what it does. That is why it is called what it is called.
 
 ---
 
@@ -43,9 +63,9 @@ sudo mv specter /usr/local/bin/
 
 **Platform notes:**
 
-- **macOS**: You may need to allow the binary in System Settings > Privacy & Security after the first run.
-- **Linux**: Requires `libewf` (`libewf-tools`) for disk imaging. Install via your package manager.
-- **Windows**: Run from an elevated (Administrator) command prompt or PowerShell.
+- **macOS**: You may need to allow the binary in System Settings > Privacy & Security after the first run. Requires `libewf` via Homebrew (`brew install libewf`).
+- **Linux**: Fully self-contained. `ewfacquire` and `ewfverify` are bundled as statically-linked binaries in the `tools/` directory. No package installation required.
+- **Windows**: Run from an elevated (Administrator) command prompt or PowerShell. All tools are bundled.
 
 ## Quick Start
 
@@ -579,15 +599,16 @@ Credential fields support `${ENV_VAR}` expansion for secure configuration. If th
 
 ## Requirements
 
-- **ewfacquire** / **ewfverify** -- must be in PATH or placed in the `tools/` directory next to the SPECTER binary
 - **Administrator/root** -- required for raw disk access and memory capture
-- Memory tools (optional): WinPmem (Windows), osxpmem (macOS/Intel), LiME (Linux)
+- **Windows/Linux** -- fully self-contained. All forensic tools (`ewfacquire`, `ewfverify`, WinPmem) are bundled in the `tools/` directory.
+- **macOS** -- requires `libewf` via Homebrew: `brew install libewf`
+- Memory tools (optional): WinPmem (Windows, bundled), osxpmem (macOS/Intel, user-provided), LiME (Linux, kernel module)
 
 ## Troubleshooting
 
 | Problem | Cause | Fix |
 |---------|-------|-----|
-| `ewfacquire: command not found` | ewfacquire not in PATH or `tools/` | Place `ewfacquire` (or `.exe`) in the `tools/` directory next to the SPECTER binary, or install `libewf-tools` system-wide |
+| `ewfacquire: command not found` | ewfacquire not in PATH or `tools/` | On Windows/Linux: verify `tools/` directory exists next to the binary. On macOS: `brew install libewf`. |
 | `permission denied` / `access denied` | Not running as admin/root | Run with `sudo` (macOS/Linux) or as Administrator (Windows) |
 | Disk imaging progress stuck at 0% | Stale TUI state (older versions) | Update to latest SPECTER release |
 | Acquisition hangs after all phases complete | Older version missing completion event | Update to latest SPECTER release |
