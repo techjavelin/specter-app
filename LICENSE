@@ -1,0 +1,113 @@
+SPECTER End-User License Agreement (EULA)
+Copyright (c) 2025-2026 Tech Javelin, Ltd. All Rights Reserved.
+
+IMPORTANT: READ THIS LICENSE AGREEMENT CAREFULLY BEFORE USING THIS SOFTWARE.
+
+By downloading, installing, or using SPECTER ("the Software"), you agree to be
+bound by the terms of this End-User License Agreement ("Agreement"). If you do
+not agree to these terms, do not download, install, or use the Software.
+
+1. GRANT OF LICENSE
+
+   Tech Javelin, Ltd. ("Licensor") grants you a limited, non-exclusive,
+   non-transferable, revocable license to download, install, and use the
+   Software solely for your internal business purposes, subject to the terms
+   and conditions of this Agreement.
+
+2. RESTRICTIONS
+
+   You may NOT:
+   a. Modify, adapt, translate, or create derivative works of the Software.
+   b. Reverse engineer, decompile, disassemble, or otherwise attempt to
+      derive the source code of the Software.
+   c. Redistribute, sublicense, rent, lease, lend, sell, or otherwise
+      transfer the Software or any rights therein to any third party.
+   d. Remove, alter, or obscure any proprietary notices, labels, or marks
+      on the Software.
+   e. Use the Software to provide services to third parties (SaaS, managed
+      service, or bureau service) without a separate commercial agreement
+      with the Licensor.
+   f. Publish benchmark or performance comparisons of the Software without
+      prior written consent from the Licensor.
+
+3. OWNERSHIP
+
+   The Software, including all copies, modifications, and derivative works,
+   is and remains the exclusive property of Tech Javelin, Ltd. This Agreement
+   does not convey any ownership interest in the Software. All rights not
+   expressly granted are reserved by the Licensor.
+
+4. INTELLECTUAL PROPERTY
+
+   The Software is protected by copyright laws, international treaty
+   provisions, and other intellectual property laws. The structure,
+   organization, and code of the Software are valuable trade secrets and
+   confidential information of Tech Javelin, Ltd.
+
+5. DATA AND PRIVACY
+
+   The Software operates entirely on-premises or on your designated
+   infrastructure. The Software does not transmit telemetry, usage data,
+   or any acquired forensic data to Tech Javelin, Ltd. Cloud upload
+   functionality connects only to storage accounts you configure and control.
+
+6. WARRANTY DISCLAIMER
+
+   THE SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS
+   OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+   FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. TECH JAVELIN, LTD.
+   DOES NOT WARRANT THAT THE SOFTWARE WILL MEET YOUR REQUIREMENTS, OPERATE
+   WITHOUT INTERRUPTION, OR BE ERROR-FREE.
+
+   THE SOFTWARE IS A FORENSIC ACQUISITION TOOL. THE LICENSOR MAKES NO
+   REPRESENTATIONS REGARDING THE ADMISSIBILITY OF EVIDENCE COLLECTED USING
+   THE SOFTWARE IN ANY LEGAL PROCEEDING. COMPLIANCE WITH APPLICABLE FORENSIC
+   STANDARDS AND LEGAL REQUIREMENTS IS THE SOLE RESPONSIBILITY OF THE USER.
+
+7. LIMITATION OF LIABILITY
+
+   IN NO EVENT SHALL TECH JAVELIN, LTD., ITS OFFICERS, DIRECTORS, EMPLOYEES,
+   OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL,
+   OR PUNITIVE DAMAGES, INCLUDING BUT NOT LIMITED TO LOSS OF DATA, LOSS OF
+   EVIDENCE, BUSINESS INTERRUPTION, OR LOST PROFITS, ARISING OUT OF OR
+   RELATED TO YOUR USE OF OR INABILITY TO USE THE SOFTWARE, REGARDLESS OF
+   THE CAUSE OF ACTION OR THE THEORY OF LIABILITY, EVEN IF TECH JAVELIN, LTD.
+   HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+
+   IN NO EVENT SHALL TECH JAVELIN, LTD.'S TOTAL LIABILITY TO YOU FOR ALL
+   CLAIMS ARISING OUT OF OR RELATED TO THIS AGREEMENT EXCEED THE AMOUNT
+   YOU PAID FOR THE SOFTWARE IN THE TWELVE (12) MONTHS PRECEDING THE CLAIM.
+
+8. TERMINATION
+
+   This Agreement is effective until terminated. Your rights under this
+   Agreement will terminate automatically without notice if you fail to
+   comply with any of its terms. Upon termination, you must cease all use
+   of the Software and destroy all copies in your possession.
+
+9. EXPORT COMPLIANCE
+
+   You agree to comply with all applicable export and import laws and
+   regulations. You may not export or re-export the Software to any country,
+   person, or entity prohibited by applicable law.
+
+10. GOVERNING LAW
+
+    This Agreement shall be governed by and construed in accordance with
+    the laws of the jurisdiction in which Tech Javelin, Ltd. is incorporated,
+    without regard to conflict of law principles.
+
+11. ENTIRE AGREEMENT
+
+    This Agreement constitutes the entire agreement between you and
+    Tech Javelin, Ltd. regarding the Software and supersedes all prior
+    agreements, understandings, and communications, whether written or oral.
+
+12. CONTACT
+
+    For licensing inquiries, commercial agreements, or questions about
+    this Agreement, contact:
+
+    Tech Javelin, Ltd.
+    https://techjavelin.com
+    legal@techjavelin.com
