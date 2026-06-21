@@ -8,7 +8,7 @@ Every sealed SPECTER evidence package contains a `specter-manifest.json` at its 
 
 ## Schema Location
 
-Schemas are published in the public repository: **`techjavelin/specter-docs`**
+Schemas are published in the public repository: **`techjavelin/specter-app`**
 
 Each SPECTER release tags this repository with the same version tag (e.g., `v1.0.0`, `v1.0.0-RC`). The schema file is always at:
 
@@ -22,8 +22,8 @@ schemas/specter-manifest.schema.json
 
 ```json
 {
-  "specter_version": "1.0.0-RC",
-  "run_id": "SutaJavelin-1782015113397301600",
+  "specter_version": "1.0.0",
+  "run_id": "WORKSTATION-01-1782015113397301600",
   ...
 }
 ```
@@ -44,18 +44,18 @@ There is no separate version mapping. The version IS the version.
 **Via raw URL (public, no auth required):**
 
 ```
-https://raw.githubusercontent.com/techjavelin/specter-docs/v{specter_version}/schemas/specter-manifest.schema.json
+https://raw.githubusercontent.com/techjavelin/specter-app/v{specter_version}/schemas/specter-manifest.schema.json
 ```
 
 Example:
 ```
-https://raw.githubusercontent.com/techjavelin/specter-docs/v1.0.0-RC/schemas/specter-manifest.schema.json
+https://raw.githubusercontent.com/techjavelin/specter-app/v1.0.0/schemas/specter-manifest.schema.json
 ```
 
 **Via GitHub API:**
 
 ```http
-GET https://api.github.com/repos/techjavelin/specter-docs/contents/schemas/specter-manifest.schema.json?ref=v{specter_version}
+GET https://api.github.com/repos/techjavelin/specter-app/contents/schemas/specter-manifest.schema.json?ref=v{specter_version}
 Accept: application/vnd.github.raw+json
 ```
 
@@ -86,7 +86,7 @@ def validate_manifest(manifest_path, schema_tag=None):
     if schema_tag is None:
         schema_tag = "v" + manifest["specter_version"]
 
-    schema_url = f"https://raw.githubusercontent.com/techjavelin/specter-docs/{schema_tag}/schemas/specter-manifest.schema.json"
+    schema_url = f"https://raw.githubusercontent.com/techjavelin/specter-app/{schema_tag}/schemas/specter-manifest.schema.json"
 
     with urllib.request.urlopen(schema_url) as r:
         schema = json.loads(r.read())
@@ -102,7 +102,7 @@ import addFormats from "ajv-formats";
 async function validateManifest(manifest: Record<string, unknown>) {
   const version = manifest.specter_version as string;
   const schemaTag = `v${version}`;
-  const schemaUrl = `https://raw.githubusercontent.com/techjavelin/specter-docs/${schemaTag}/schemas/specter-manifest.schema.json`;
+  const schemaUrl = `https://raw.githubusercontent.com/techjavelin/specter-app/${schemaTag}/schemas/specter-manifest.schema.json`;
 
   const res = await fetch(schemaUrl);
   const schema = await res.json();
