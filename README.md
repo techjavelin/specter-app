@@ -66,7 +66,14 @@ SPECTER creates ghosts. That is what it does. That is why it is called what it i
 - [Troubleshooting](#troubleshooting)
 - [Evidence Collection Guide](#evidence-collection-guide)
 - [Technical Reference](#technical-reference)
-- [License](#license)
+- [Working with Evidence Artifacts](#working-with-evidence-artifacts)
+
+### Additional Documentation
+
+- [Evidence Collection Guide](docs/EVIDENCE-GUIDE.md) -- forensic best practices, chain of custody, legal considerations
+- [Technical Reference](docs/TECHNICAL-REFERENCE.md) -- tools, collection methods, licensing, admissibility
+- [Working with Evidence Artifacts](docs/WORKING-WITH-EVIDENCE.md) -- mounting images, analyzing dumps, third-party handoff
+- [Schema Validation Guide](docs/SCHEMA-VALIDATION.md) -- validating manifest files programmatically
 
 ---
 
@@ -687,6 +694,20 @@ Topics covered:
 - Integrity and sealing (SHA-256, HMAC-SHA256)
 - Tool licensing summary (LGPL, Apache, BSD)
 
+## Working with Evidence Artifacts
+
+For guidance on mounting disk images, analyzing memory dumps, searching event
+logs, and safely handling evidence for third-party transfer, see
+[Working with Evidence Artifacts](docs/WORKING-WITH-EVIDENCE.md).
+
+Topics covered:
+- Verifying package integrity (SPECTER verify and manual methods)
+- Mounting and analyzing E01 disk images (read-only)
+- Memory dump analysis with Volatility 3
+- Working with registry hives, event logs, browser artifacts, prefetch
+- Maintaining chain of custody when transferring evidence
+- Providing evidence to legal counsel or courts
+
 **Important:** Consult qualified legal counsel in your jurisdiction before using
 SPECTER for evidence collection in legal proceedings.
 
@@ -700,4 +721,6 @@ Proprietary. (c) 2026 Tech Javelin, Ltd. All Rights Reserved.
 - **GitHub**: https://github.com/techjavelin/specter-app
 - **Evidence Guide**: [docs/EVIDENCE-GUIDE.md](docs/EVIDENCE-GUIDE.md)
 - **Technical Reference**: [docs/TECHNICAL-REFERENCE.md](docs/TECHNICAL-REFERENCE.md)
+- **Working with Evidence**: [docs/WORKING-WITH-EVIDENCE.md](docs/WORKING-WITH-EVIDENCE.md)
+- **Schema Validation**: [docs/SCHEMA-VALIDATION.md](docs/SCHEMA-VALIDATION.md)
 - **Changelog**: [CHANGELOG.md](CHANGELOG.md)
