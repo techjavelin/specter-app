@@ -458,6 +458,98 @@ When evidence must be presented in legal proceedings:
 - libewf/ewftools: https://github.com/libyal/libewf
 - SPECTER Technical Reference: [docs/TECHNICAL-REFERENCE.md](TECHNICAL-REFERENCE.md)
 - SPECTER Evidence Guide: [docs/EVIDENCE-GUIDE.md](EVIDENCE-GUIDE.md)
+- SentinelOne Integration: [docs/integrations/SENTINELONE.md](integrations/SENTINELONE.md)
+- Intune Integration: [docs/integrations/INTUNE.md](integrations/INTUNE.md)
+
+---
+
+## Working with Hibernate Files
+
+### Overview
+
+When SPECTER extracts `hiberfil.sys` during cold acquisition, the file is placed
+in the `memory/` directory alongside any live RAM dump. It can be analyzed with
+the same tools used for raw memory dumps, with one additional step.
+
+### Converting for Analysis
+
+Volatility 3 supports hibernate files directly via the Windows hibernation layer:
+
+```bash
+# Analyze directly (Volatility 3 auto-detects format)
+vol -f memory/hiberfil.sys windows.pslist
+vol -f memory/hiberfil.sys windows.netscan
+vol -f memory/hiberfil.sys windows.filescan
+
+# If direct analysis fails, convert to raw first
+vol -f memory/hiberfil.sys windows.hibernation.Dump --output raw_from_hibernate.raw
+```
+
+### Limitations vs Live RAM Dump
+
+- Fast Startup hibernate files contain only kernel session (no user processes)
+- Full hibernate files are equivalent to live dumps but compressed differently
+- Some tools may require decompression before analysis
+- The hibernate timestamp represents when hibernation occurred, not current state
+
+### Metadata File
+
+SPECTER writes `memory/hiberfil-metadata.txt` documenting:
+- Source path of the hibernate file
+- Hibernate type (full vs fast startup)
+- File size
+- Whether it represents a full RAM equivalent
+
+---
+
+## API Collection Artifacts
+
+### Output Structure
+
+API-sourced evidence is stored in `api/{provider_id}/`:
+
+```
+evidence/api/
+  sentinelone/
+    agent_info.json      -- Device agent details (OS, version, IP, groups)
+    threats.json         -- Threat detections and mitigation timeline
+    deep_visibility.json -- Process/network/file/registry events (72h window)
+    activity_log.json    -- Console actions related to device
+    _transport_logs/     -- HTTP request/response audit trail
+  intune/
+    device_info.json     -- Managed device record
+    compliance.json      -- Policy compliance state
+    installed_apps.json  -- Detected applications
+    config_profiles.json -- Applied configuration policies
+    recovery_keys.json   -- BitLocker recovery key(s)
+    audit_logs.json      -- Admin actions on device
+    _transport_logs/     -- HTTP audit trail
+```
+
+### Correlating with Disk/Memory Evidence
+
+API data provides context that disk and memory analysis alone cannot:
+
+1. **Timeline enrichment:** S1 threat detections include timestamps that correlate
+   with process execution visible in memory dumps and prefetch files on disk.
+2. **Compliance state:** Intune compliance data shows whether security policies
+   were enforced at time of incident.
+3. **Lateral context:** S1 activity log may show if other devices were affected.
+4. **Recovery keys:** Intune-sourced BitLocker keys enable disk decryption during
+   analysis without relying on the device's TPM.
+
+### Merging Live and Cold Evidence
+
+When working with split-mode acquisitions (live capture + cold resume):
+
+- Both sets of artifacts share the same run ID and output directory
+- The state file (`specter-state.json`) documents which phases ran in which mode
+- Live artifacts (memory/, volatile/) were collected while the device was running
+- Cold artifacts (triage/, api/, disk/) were collected after hibernation/shutdown
+- The final seal covers ALL artifacts under one HMAC regardless of collection mode
+
+Maintain the temporal distinction in your analysis notes -- volatile data reflects
+the live state, while disk/triage reflect the state at time of cold boot.
 
 ---
 

@@ -74,6 +74,10 @@ SPECTER creates ghosts. That is what it does. That is why it is called what it i
 - [Technical Reference](docs/TECHNICAL-REFERENCE.md) -- tools, collection methods, licensing, admissibility
 - [Working with Evidence Artifacts](docs/WORKING-WITH-EVIDENCE.md) -- mounting images, analyzing dumps, third-party handoff
 - [Schema Validation Guide](docs/SCHEMA-VALIDATION.md) -- validating manifest files programmatically
+- [SentinelOne Integration](docs/integrations/SENTINELONE.md) -- EDR telemetry collection setup
+- [Intune Integration](docs/integrations/INTUNE.md) -- device management data via Graph API
+- [MDM Deployment Guide](docs/deployment/MDM-DEPLOYMENT.md) -- pushing SPECTER via Intune, Jamf, JumpCloud
+- [Cloud Targets Guide](docs/deployment/CLOUD-TARGETS.md) -- S3, Azure Blob, GCS output configuration
 
 ---
 
@@ -83,10 +87,14 @@ SPECTER creates ghosts. That is what it does. That is why it is called what it i
 |------------|-------------|
 | **Disk Imaging** | E01 format via ewfacquire with configurable segment sizes |
 | **Memory Capture** | WinPmem (Windows), osxpmem (macOS/Intel), LiME (Linux) |
+| **Hibernate Extraction** | Preserves hiberfil.sys from cold-booted devices (full RAM equivalent) |
 | **Volatile Collection** | Running processes, network connections, DNS cache, ARP table |
 | **Triage Collection** | Registry hives, event logs, installed software, system logs |
+| **API Collection** | External integrations (SentinelOne, Intune) with plugin architecture |
 | **Interactive TUI** | Bubble Tea wizard with step-by-step guided acquisition |
 | **Headless Mode** | YAML config-driven for MDM/scripted deployment |
+| **Live Capture** | Volatile-only mode for IT staff handoff before cold acquisition |
+| **Cold Boot (WinPE)** | Bootable forensic USB with branded menu and auto-resume |
 | **HMAC Seal** | Cryptographic chain-of-custody manifest (SHA-256 + HMAC) |
 | **Cloud Upload** | Streaming segment upload to S3, GCS, or Azure Blob |
 | **Verify Command** | Independent integrity verification of sealed evidence packets |

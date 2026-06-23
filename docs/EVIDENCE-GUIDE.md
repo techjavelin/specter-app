@@ -450,6 +450,81 @@ examiner.** No software tool alone can guarantee admissibility.
 
 ---
 
+## Split-Mode Acquisition and Chain of Custody
+
+### Overview
+
+SPECTER supports a split-mode workflow where volatile artifacts are captured
+by IT staff on-site (live capture), and the remaining acquisition (triage,
+disk imaging, API collection, sealing) is performed later by the examiner
+via cold boot.
+
+### Chain of Custody Across Handoff
+
+The state file (`specter-state.json`) bridges the two phases:
+
+1. **IT Staff (Live):** Runs live capture (memory + volatile). State file records
+   what was collected, when, by whom, and the run ID.
+2. **Physical Transport:** Device is closed (not shut down) and transported.
+   Standard physical chain of custody applies during transport.
+3. **Examiner (Cold):** Boots from WinPE USB, auto-resumes from state file.
+   All subsequent phases are appended to the same run ID and evidence directory.
+
+### Maintaining Integrity
+
+- The state file includes SHA-256 hashes of all completed artifacts
+- Live capture artifacts are never modified during cold resume
+- The final seal covers ALL artifacts from both phases under one HMAC
+- Document the handoff: who transported, when, physical condition of device
+
+### Hibernate File as Memory Evidence
+
+When a device is hibernated (lid closed), `hiberfil.sys` contains a complete
+RAM snapshot equivalent to a live memory dump. Courts have accepted hibernate
+files as evidence under the same standards as live memory captures, provided:
+
+- The file was acquired without modifying the source (read-only mount or cold boot)
+- The acquisition method is documented
+- Hash verification confirms integrity
+- The analyst can demonstrate the file was not altered post-acquisition
+
+---
+
+## API-Sourced Evidence
+
+### Documentation Requirements
+
+Evidence collected via external APIs (SentinelOne, Intune, etc.) requires
+additional documentation beyond disk/memory artifacts:
+
+1. **Authentication Proof:** Document which credentials were used, when the token
+   was issued, and what permissions it had. Do NOT store the credential itself
+   in evidence -- only document that authentication occurred.
+
+2. **Timestamp Correlation:** API responses include server-side timestamps. Cross-
+   reference these with the device's local timeline to establish temporal context.
+
+3. **Response Integrity:** SPECTER logs all HTTP transactions to `_transport_logs/`
+   including request URLs, response codes, and timing. These logs prove when data
+   was retrieved and from which endpoint.
+
+4. **Scope Documentation:** Record which API options were selected and why certain
+   data categories were included or excluded.
+
+### Admissibility Considerations
+
+API-sourced data is third-party business records. Under FRE 803(6), business
+records are admissible as a hearsay exception when:
+- Made at or near the time of the event
+- By a person with knowledge (the EDR/MDM system)
+- Kept in the course of a regularly conducted activity
+- The method and circumstances indicate trustworthiness
+
+The transport logs and JSON response files together demonstrate the data was
+retrieved systematically and preserved without modification.
+
+---
+
 *Copyright 2026 Tech Javelin, Ltd. All rights reserved.*
 *This document is provided for informational purposes only and does not
 constitute legal advice.*

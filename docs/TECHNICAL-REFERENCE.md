@@ -318,6 +318,214 @@ SPECTER itself is proprietary software. See the [LICENSE](LICENSE) for terms.
 
 ---
 
+## 7. Acquisition Modes
+
+SPECTER supports three acquisition modes that accommodate the split workflow
+between IT staff (on-site) and forensic examiners (off-site):
+
+### Full Acquisition
+
+Standard mode -- all phases run in sequence on a single session:
+`MEMORY -> VOLATILE -> TRIAGE -> API (optional) -> DISK -> SEAL`
+
+### Live Capture (Volatile Only)
+
+Designed for IT staff to run before closing a device for transport:
+- Captures only MEMORY and VOLATILE phases
+- Saves state file for later resume
+- No disk imaging, no seal
+- CLI: `specter acquire --headless --live --config specter.yaml`
+
+### Cold Collection (Resume from Live Capture)
+
+Examiner boots the device from WinPE USB media and resumes:
+`HIBERNATE -> TRIAGE -> API (optional) -> DISK -> SEAL`
+
+The hibernate phase extracts `hiberfil.sys` before anything touches the disk,
+preserving the RAM state from when the device was hibernated/closed.
+
+### Phase Ordering
+
+| Phase | Mode: Full | Mode: Live | Mode: Cold |
+|-------|-----------|-----------|-----------|
+| HIBERNATE | -- | -- | First (if available) |
+| MEMORY | 1st | 1st | Skipped (done in live) |
+| VOLATILE | 2nd | 2nd | Skipped (done in live) |
+| TRIAGE | 3rd | -- | 2nd |
+| API | 4th (optional) | -- | 3rd (optional) |
+| DISK | 5th | -- | 4th |
+| SEAL | 6th | -- | 5th |
+
+---
+
+## 8. Hibernate File Extraction
+
+### What is hiberfil.sys
+
+When Windows hibernates (lid close, explicit hibernate, or hybrid shutdown),
+the kernel writes the contents of physical RAM to `C:\hiberfil.sys`. This file
+is a compressed snapshot of all memory at the time of hibernation.
+
+### Forensic Value
+
+A full hibernate file contains the same data as a live memory dump:
+- Complete process tree and execution state
+- Open network connections and sockets
+- Encryption keys (BitLocker FVEK, cached credentials, session tokens)
+- Loaded DLLs, kernel drivers, rootkit indicators
+- Clipboard, open file handles, registry in memory
+
+### Detection and Validation
+
+SPECTER validates the hibernate file by checking:
+1. **Header magic bytes** (first 4 bytes):
+   - `hibr` or `HIBR` = Full hibernate (complete RAM snapshot)
+   - `wake` = Fast Startup / hybrid shutdown (kernel-only, limited value)
+2. **File size** relative to installed RAM (full hibernate is typically 40-100% of RAM)
+
+### Handling
+
+- If full hibernate detected: copied with progress reporting to `memory/hiberfil.sys`
+- If fast startup detected: copied with warning about limited forensic value
+- If not found: phase skipped with log entry (non-fatal)
+- Metadata written to `memory/hiberfil-metadata.txt`
+
+---
+
+## 9. API Collection Phase
+
+### Architecture
+
+The API collection phase uses a plugin-based provider architecture:
+
+```
+Provider Interface -> Registry -> Collector -> Phase Engine
+```
+
+Each provider implements:
+- `ID()` / `Name()` / `Description()` -- identity
+- `ConfigFields()` -- defines the configuration form (drives both TUI and YAML)
+- `Validate(cfg)` -- pre-flight configuration check
+- `Collect(ctx, cfg, outputDir, events)` -- executes collection
+
+### Built-in Providers
+
+| Provider | ID | Data Collected |
+|----------|-----|---------------|
+| SentinelOne | `sentinelone` | Agent info, threats, deep visibility events, activity log |
+| Microsoft Intune | `intune` | Compliance, installed apps, config profiles, BitLocker keys, audit logs |
+
+### Configuration (YAML)
+
+```yaml
+api_integration:
+  sentinelone:
+    api_url: "https://usea1-partners.sentinelone.net"
+    api_token: "your-api-token"
+    hostname: "WORKSTATION-01"
+    options:
+      - agent_info
+      - threats
+      - deep_visibility
+      - activity_log
+  intune:
+    tenant_id: "your-tenant-id"
+    client_id: "app-client-id"
+    client_secret: "app-secret"
+    device_name: "WORKSTATION-01"
+    options:
+      - compliance
+      - installed_apps
+      - recovery_keys
+```
+
+### Output Structure
+
+```
+evidence/api/
+  sentinelone/
+    agent_info.json
+    threats.json
+    deep_visibility.json
+    activity_log.json
+    _transport_logs/
+  intune/
+    device_info.json
+    compliance.json
+    installed_apps.json
+    recovery_keys.json
+    audit_logs.json
+    _transport_logs/
+```
+
+### Adding New Providers
+
+See the [API Provider Development Guide](../agents.md) for implementation details.
+Individual provider documentation: [SentinelOne](integrations/SENTINELONE.md),
+[Intune](integrations/INTUNE.md).
+
+---
+
+## 10. Cold Boot Environment (WinPE)
+
+### Overview
+
+SPECTER can generate a bootable WinPE USB drive for cold acquisition. The boot
+environment includes the SPECTER binary, forensic tools, and a branded boot menu.
+
+### Boot Menu
+
+On boot, the WinPE environment displays the SPECTER ASCII banner and presents:
+
+```
+1. Auto-Resume (detect and continue from live capture)
+2. New Acquisition (full wizard)
+3. Boot with Config File (specter.yaml from boot media)
+```
+
+- Option 1 scans all accessible volumes for `specter-state.json`
+- Option 2 launches the full interactive TUI wizard
+- Option 3 reads config from boot media root; falls back to wizard if missing
+
+### Building Boot Media
+
+Requires Windows ADK installed on the examiner's preparation workstation.
+
+```
+specter coldboot prepare --output F:\boot.iso
+specter coldboot prepare --output F:\boot.iso --config specter.yaml --tools ./tools
+```
+
+### BitLocker Unlock
+
+When the target volume is BitLocker-encrypted, SPECTER prompts for the recovery
+key during cold acquisition. The key is:
+- Held in memory only during the session
+- Never written to state files, logs, or evidence output
+- Passed directly to `manage-bde -unlock` on WinPE
+
+### Boot Environment Detection
+
+SPECTER detects its execution context automatically:
+- **Live (Native OS):** Normal execution on a running system
+- **Cold USB (WinPE):** Detected via WinPE registry markers or removable media heuristics
+- **Cold Network (PXE):** Reserved for future network boot scenarios
+
+The wizard menu adapts accordingly -- Live Capture is disabled in cold boot,
+Cold Collection is disabled when not running from removable media.
+
+---
+
+## References (continued)
+
+- Windows Hibernation format: Microsoft documentation, Volatility hibernation layer
+- SentinelOne API: https://usea1-partners.sentinelone.net/apidoc/
+- Microsoft Graph API: https://learn.microsoft.com/en-us/graph/api/overview
+- Windows ADK: https://learn.microsoft.com/en-us/windows-hardware/get-started/adk-install
+- manage-bde: https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/manage-bde
+
+---
+
 *Copyright 2026 Tech Javelin, Ltd. All rights reserved.*
 *This document is provided for informational purposes only and does not
 constitute legal advice.*
